@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<suite name="CucumberTestNGSuite" parallel="classes" thread-count="1">
+    <test name="CucumberTest">
+        <classes>
+            <class name="com.natwest.apitests.RunTest"/>
+        </classes>
+    </test>
+</suite>
