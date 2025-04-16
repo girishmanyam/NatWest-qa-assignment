@@ -29,6 +29,20 @@ public class ItemSteps {
 
     private Item item;
 
+    private static Item buildItem(Map<String, String> row) {
+        ItemData itemData = ItemData.builder()
+                .year(Integer.parseInt(row.get("year")))
+                .price(Double.parseDouble(row.get("price")))
+                .cpuModel(row.get("cpuModel"))
+                .hardDiskSize(row.get("hardDiskSize"))
+                .build();
+
+        return Item.builder()
+                .name(row.get("name"))
+                .data(itemData)
+                .build();
+    }
+
     @Given("a {string} item is created")
     public void aItemIsCreated(String name) {
         item = Item.builder()
@@ -97,7 +111,7 @@ public class ItemSteps {
         List<Map<String, String>> rows = dataTable.asMaps();
         ArrayList<Item> items = new ArrayList<>();
         ArrayList<Response> responses = new ArrayList<>();
-        for(Map<String,String> row : rows) {
+        for (Map<String, String> row : rows) {
             Item item = buildItem(row);
             Response response = ItemApiService.addItem(item);
             assertForHTTPResponseCode200(response);
@@ -114,27 +128,27 @@ public class ItemSteps {
         List<String> ids = itemResponses.stream()
                 .map(response -> response.jsonPath().get("id").toString())
                 .collect(Collectors.toList());
-        Response listResponse = ItemApiService.listAllItems( ids);
+        Response listResponse = ItemApiService.listAllItems(ids);
         threadScenarioContext().put("allItemsResponse", listResponse);
     }
 
     @And("the response should contain more or equal to {int} items")
     public void theResponseShouldContainMoreOrEqualToItems(int noOfItems) {
-        Response response =  threadScenarioContext().getResponse("allItemsResponse");
+        Response response = threadScenarioContext().getResponse("allItemsResponse");
         assertForHTTPResponseCode200(response);
         Assert.assertEquals(response.jsonPath().getList("$").size(), noOfItems);
     }
 
     @When("the user requests to delete item by itemId")
     public void theUserRequestsToDeleteItemByItemId() {
-        String itemId =  threadScenarioContext().getString("itemId");
+        String itemId = threadScenarioContext().getString("itemId");
         Response itemResponse = ItemApiService.deleteItemById(itemId);
         threadScenarioContext().put("deleteItem", itemResponse);
     }
 
     @Then("item is deleted successfully")
     public void itemIsDeletedSuccessfully() {
-        Response deleteItemResponse =  threadScenarioContext().getResponse("deleteItem");
+        Response deleteItemResponse = threadScenarioContext().getResponse("deleteItem");
         assertForHTTPResponseCode200(deleteItemResponse);
         String itemId = threadScenarioContext().getString("itemId");
         String actualMessage = deleteItemResponse.jsonPath().getString("message");
@@ -150,20 +164,18 @@ public class ItemSteps {
 
     @Then("a {string} response should be {int} with error message")
     public void deleteItemResponseShouldBeWithMessage(String apiName, int statusCode) {
-        Response response =  threadScenarioContext().getResponse(apiName);
+        Response response = threadScenarioContext().getResponse(apiName);
         String itemId = threadScenarioContext().getString("itemId");
-        assertThat(response.getStatusCode(),is(equalTo(statusCode)));
+        assertThat(response.getStatusCode(), is(equalTo(statusCode)));
         String actualMessage = response.jsonPath().getString("message");
         String expectedMessage = String.format("Object with id = %s does not exist.", itemId);
         assertThat(actualMessage, is(equalTo(expectedMessage)));
 
     }
 
-
-
     private Item updateCpuModel(String cpuModel, Item item) {
         return item.toBuilder()
-                .data( item.getData().toBuilder()
+                .data(item.getData().toBuilder()
                         .cpuModel(cpuModel)
                         .build())
                 .build();
@@ -177,21 +189,6 @@ public class ItemSteps {
                 .build();
 
     }
-
-    private static Item buildItem(Map<String, String> row) {
-        ItemData itemData = ItemData.builder()
-                .year(Integer.parseInt(row.get("year")))
-                .price(Double.parseDouble(row.get("price")))
-                .cpuModel(row.get("cpuModel"))
-                .hardDiskSize(row.get("hardDiskSize"))
-                .build();
-
-        return Item.builder()
-                .name(row.get("name"))
-                .data(itemData)
-                .build();
-    }
-
 
 
 }

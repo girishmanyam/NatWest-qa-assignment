@@ -15,7 +15,6 @@ Designed for readable, maintainable, and scalable API automation parallel execut
 - **Lombok**
 - **Logback / SLF4J for logging**
 
-
 ---
 
 ## ✅ Getting Started
@@ -24,7 +23,6 @@ Designed for readable, maintainable, and scalable API automation parallel execut
 
 - Java 17
 - Maven 3.x
-
 
 ### Install Dependencies
 
@@ -36,6 +34,7 @@ mvn clean install
 mvn clean verify
 
 ```
+
 ### Parallel Execution
 
 ```bash
@@ -43,10 +42,12 @@ mvn clean verify -Ddataproviderthreadcount=2
 ```
 
 ### Configuration
-Configuration settings can be managed in the config.properties file located under src/test/resources/config/. 
+
+Configuration settings can be managed in the config.properties file located under src/test/resources/config/.
 Update it with your API base URI and other settings:
 
 ### Maintainers
- GitHub:[@]
+
+GitHub:[@girishmanyam]
 
 

@@ -13,8 +13,8 @@ Feature: Manage items through REST API
 
   Scenario: Ability to return an item
     Given a new item is created with the following details:
-      | name                       | price   | cpuModel      |year | hardDiskSize |
-      | Microsoft Surface Laptop 5 | 2799.50 | Intel Core i9 | 2021| 1 TB         |
+      | name                       | price   | cpuModel      | year | hardDiskSize |
+      | Microsoft Surface Laptop 5 | 2799.50 | Intel Core i9 | 2021 | 1 TB         |
     When the user requests to get item details by itemId
     Then a "getItem" service returns successful response code
     And the item id value should match

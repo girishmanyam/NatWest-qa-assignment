@@ -1,4 +1,5 @@
 package com.natwest.apitests.model;
+
 import lombok.Builder;
 import lombok.Data;
 

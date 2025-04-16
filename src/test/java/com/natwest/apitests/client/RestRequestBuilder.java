@@ -4,8 +4,6 @@ import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Map;
@@ -49,7 +47,7 @@ public class RestRequestBuilder {
         return this;
     }
 
-    public RestRequestBuilder queryParams( String paramName, List<String> queryParams) {
+    public RestRequestBuilder queryParams(String paramName, List<String> queryParams) {
         this.queryParams = queryParams;
         this.paramName = paramName;
         return this;

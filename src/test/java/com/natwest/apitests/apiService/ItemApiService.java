@@ -1,6 +1,5 @@
 package com.natwest.apitests.apiService;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.natwest.apitests.client.RestRequestBuilder;
 import com.natwest.apitests.model.Item;
 import config.ConfigUtil;
@@ -16,7 +15,8 @@ public class ItemApiService {
 
     private static final String API_PATH = "/objects";
 
-    private ItemApiService() {}
+    private ItemApiService() {
+    }
 
     public static Response addItem(Item item) {
         return RestRequestBuilder.builder().method("POST")

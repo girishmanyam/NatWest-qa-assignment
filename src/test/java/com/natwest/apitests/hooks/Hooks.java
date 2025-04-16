@@ -24,7 +24,7 @@ public class Hooks {
     @After
     public void clearClient() {
         ScenarioContextHolder.clear();
-        }
     }
+}
 
 
