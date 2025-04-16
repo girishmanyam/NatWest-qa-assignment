@@ -14,7 +14,6 @@ public class ConfigUtil {
             config = configs.properties(
                     ConfigUtil.class.getClassLoader().getResource("config/config.properties")
             );
-            config.getKeys().forEachRemaining(System.out::println);
 
         } catch (ConfigurationException e) {
             throw new RuntimeException("Failed to load config.properties", e);
