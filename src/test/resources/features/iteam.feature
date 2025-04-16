@@ -19,3 +19,13 @@ Feature: Manage items through REST API
     Then a "getItem" service returns successful response code
     And the item id value should match
     And the "getItem" response should contain a item details
+
+  Scenario: Ability to return an multiple items
+    Given a multiple items are created with the following details:
+      | name                 | price   | cpuModel      | year | hardDiskSize |
+      | Dell XPS 15          | 1899.99 | Intel Core i7 | 2022 | 512 GB       |
+      | HP Spectre x360      | 1549.99 | Intel Core i5 | 2021 | 256 GB       |
+      | Lenovo ThinkPad X1   | 2049.50 | Intel Core i9 | 2023 | 1 TB         |
+      | Apple MacBook Air M2 | 1249.99 | Apple M2      | 2023 | 512 GB       |
+    When the request to list all objects is made
+    Then the response should contain more or equal to 4 items

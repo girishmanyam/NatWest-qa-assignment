@@ -1,6 +1,5 @@
 package com.natwest.apitests.steps;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.natwest.apitests.apiService.ItemApiService;
 import com.natwest.apitests.model.Item;
 import com.natwest.apitests.model.ItemData;
@@ -10,9 +9,12 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import io.restassured.response.Response;
+import org.testng.Assert;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static com.natwest.apitests.apiAssertions.ApiAssertions.assertForHTTPResponseCode200;
 import static com.natwest.apitests.apiAssertions.ApiAssertions.assertForItemDetails;
@@ -43,7 +45,7 @@ public class ItemSteps {
     }
 
     @When("the request to add the item is made")
-    public void the_request_to_add_the_item_is_made() throws JsonProcessingException {
+    public void the_request_to_add_the_item_is_made() {
         Response response = ItemApiService.addItem(item);
         threadScenarioContext().put("addItem", response);
         threadScenarioContext().put("itemDetail", item);
@@ -63,7 +65,7 @@ public class ItemSteps {
     }
 
     @Given("a new item is created with the following details:")
-    public void aNewItemIsCreatedWithTheFollowingDetails(DataTable dataTable) throws JsonProcessingException {
+    public void aNewItemIsCreatedWithTheFollowingDetails(DataTable dataTable) {
         List<Map<String, String>> rows = dataTable.asMaps();
         Item item = buildItem(rows.get(0));
         Response response = ItemApiService.addItem(item);
@@ -86,6 +88,38 @@ public class ItemSteps {
         assertEquals(actualItemId, itemResponse.jsonPath().getString("id"));
     }
 
+    @Given("a multiple items are created with the following details:")
+    public void aMultipleItemsAreCreatedWithTheFollowingDetails(DataTable dataTable) {
+        List<Map<String, String>> rows = dataTable.asMaps();
+        ArrayList<Item> items = new ArrayList<>();
+        ArrayList<Response> responses = new ArrayList<>();
+        for(Map<String,String> row : rows) {
+            Item item = buildItem(row);
+            Response response = ItemApiService.addItem(item);
+            assertForHTTPResponseCode200(response);
+            items.add(item);
+            responses.add(response);
+        }
+        threadScenarioContext().put("itemResponses", responses);
+        threadScenarioContext().put("items", items);
+    }
+
+    @Given("the request to list all objects is made")
+    public void theRequestToListAllObjectsIsMade() {
+        List<Response> itemResponses = threadScenarioContext().getResponses("itemResponses");
+        List<String> ids = itemResponses.stream()
+                .map(response -> response.jsonPath().get("id").toString())
+                .collect(Collectors.toList());
+        Response listResponse = ItemApiService.listAllItems( ids);
+        threadScenarioContext().put("allItemsResponse", listResponse);
+    }
+
+    @And("the response should contain more or equal to {int} items")
+    public void theResponseShouldContainMoreOrEqualToItems(int noOfItems) {
+        Response response =  threadScenarioContext().getResponse("allItemsResponse");
+        assertForHTTPResponseCode200(response);
+        Assert.assertEquals(response.jsonPath().getList("$").size(), noOfItems);
+    }
 
 
 
@@ -114,11 +148,10 @@ public class ItemSteps {
                 .hardDiskSize(row.get("hardDiskSize"))
                 .build();
 
-        Item itemBuilder = Item.builder()
+        return Item.builder()
                 .name(row.get("name"))
                 .data(itemData)
                 .build();
-        return itemBuilder;
     }
 
 
