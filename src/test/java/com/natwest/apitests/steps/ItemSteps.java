@@ -14,11 +14,15 @@ import org.testng.Assert;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static com.natwest.apitests.apiAssertions.ApiAssertions.assertForHTTPResponseCode200;
 import static com.natwest.apitests.apiAssertions.ApiAssertions.assertForItemDetails;
 import static com.natwest.apitests.context.ScenarioContextHolder.threadScenarioContext;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 import static org.testng.Assert.assertEquals;
 
 public class ItemSteps {
@@ -119,6 +123,40 @@ public class ItemSteps {
         Response response =  threadScenarioContext().getResponse("allItemsResponse");
         assertForHTTPResponseCode200(response);
         Assert.assertEquals(response.jsonPath().getList("$").size(), noOfItems);
+    }
+
+    @When("the user requests to delete item by itemId")
+    public void theUserRequestsToDeleteItemByItemId() {
+        String itemId =  threadScenarioContext().getString("itemId");
+        Response itemResponse = ItemApiService.deleteItemById(itemId);
+        threadScenarioContext().put("deleteItem", itemResponse);
+    }
+
+    @Then("item is deleted successfully")
+    public void itemIsDeletedSuccessfully() {
+        Response deleteItemResponse =  threadScenarioContext().getResponse("deleteItem");
+        assertForHTTPResponseCode200(deleteItemResponse);
+        String itemId = threadScenarioContext().getString("itemId");
+        String actualMessage = deleteItemResponse.jsonPath().getString("message");
+        String expectedMessage = String.format("Object with id = %s, has been deleted.", itemId);
+        assertThat(actualMessage, is(equalTo(expectedMessage)));
+    }
+
+    @Given("I have a non-existing item")
+    public void iHaveANonExistingItem() {
+        String invalidItemId = UUID.randomUUID().toString();
+        threadScenarioContext().put("itemId", invalidItemId);
+    }
+
+    @Then("a {string} response should be {int} with error message")
+    public void deleteItemResponseShouldBeWithMessage(String apiName, int statusCode) {
+        Response response =  threadScenarioContext().getResponse(apiName);
+        String itemId = threadScenarioContext().getString("itemId");
+        assertThat(response.getStatusCode(),is(equalTo(statusCode)));
+        String actualMessage = response.jsonPath().getString("message");
+        String expectedMessage = String.format("Object with id = %s does not exist.", itemId);
+        assertThat(actualMessage, is(equalTo(expectedMessage)));
+
     }
 
 

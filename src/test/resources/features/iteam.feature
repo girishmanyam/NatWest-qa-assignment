@@ -29,3 +29,20 @@ Feature: Manage items through REST API
       | Apple MacBook Air M2 | 1249.99 | Apple M2      | 2023 | 512 GB       |
     When the request to list all objects is made
     Then the response should contain more or equal to 4 items
+
+  Scenario: Successfully delete an item
+    Given a new item is created with the following details:
+      | name        | price  | cpuModel      |
+      | Dell XPS 15 | 899.99 | Intel Core i7 |
+    When the user requests to delete item by itemId
+    Then item is deleted successfully
+
+  Scenario: Delete an non-existing item
+    Given I have a non-existing item
+    When the user requests to delete item by itemId
+    Then a "deleteItem" response should be 404 with error message
+
+  Scenario: Get an item with a non-existing item
+    Given I have a non-existing item
+    When the user requests to get item details by itemId
+    Then a "getItem" response should be 404 with error message
