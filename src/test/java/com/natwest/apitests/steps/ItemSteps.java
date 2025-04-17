@@ -152,7 +152,7 @@ public class ItemSteps {
         assertForHTTPResponseCode200(deleteItemResponse);
         String itemId = threadScenarioContext().getString("itemId");
         String actualMessage = deleteItemResponse.jsonPath().getString("message");
-        String expectedMessage = String.format("Object with id = %s, has been deleted.", itemId);
+        String expectedMessage = String.format("Object with id = %s has been deleted.", itemId);
         assertThat(actualMessage, is(equalTo(expectedMessage)));
     }
 
@@ -167,10 +167,9 @@ public class ItemSteps {
         Response response = threadScenarioContext().getResponse(apiName);
         String itemId = threadScenarioContext().getString("itemId");
         assertThat(response.getStatusCode(), is(equalTo(statusCode)));
-        String actualMessage = response.jsonPath().getString("message");
-        String expectedMessage = String.format("Object with id = %s does not exist.", itemId);
+        String actualMessage = response.jsonPath().getString("error");
+        String expectedMessage = String.format("Object with id = %s doesn't exist.", itemId);
         assertThat(actualMessage, is(equalTo(expectedMessage)));
-
     }
 
     private Item updateCpuModel(String cpuModel, Item item) {

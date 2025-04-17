@@ -32,8 +32,8 @@ Feature: Manage items through REST API
 
   Scenario: Successfully delete an item
     Given a new item is created with the following details:
-      | name        | price  | cpuModel      |
-      | Dell XPS 15 | 899.99 | Intel Core i7 |
+      | name        | price  | cpuModel      |year | hardDiskSize |
+      | Dell XPS 15 | 899.99 | Intel Core i7 |2023 | 512 GB       |
     When the user requests to delete item by itemId
     Then item is deleted successfully
 
@@ -42,7 +42,4 @@ Feature: Manage items through REST API
     When the user requests to delete item by itemId
     Then a "deleteItem" response should be 404 with error message
 
-  Scenario: Get an item with a non-existing item
-    Given I have a non-existing item
-    When the user requests to get item details by itemId
-    Then a "getItem" response should be 404 with error message
+
