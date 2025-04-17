@@ -38,7 +38,7 @@ mvn clean verify
 ### Parallel Execution
 
 ```bash
-mvn clean verify -Ddataproviderthreadcount=2
+mvn clean verify -Dparallel=methods -DthreadCount=4
 ```
 
 ### Configuration
